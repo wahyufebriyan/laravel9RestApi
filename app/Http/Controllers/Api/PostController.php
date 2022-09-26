@@ -26,6 +26,7 @@ class PostController extends BaseController
             'description' => 'required',
             'teknologi' => 'required',
             'repo' => 'required',
+            'live' => '',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -65,6 +66,7 @@ class PostController extends BaseController
             'description' => 'required',
             'teknologi' => 'required',
             'repo' => 'required',
+            'live' => '',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
