@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/register', [App\Http\Controllers\Api\RegisterController::class, 'register']);
-Route::post('/login', [App\Http\Controllers\Api\RegisterController::class, 'login']);
+
+Route::post('/login', [App\Http\Controllers\Api\LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function() {
     Route::resource('/posts', App\Http\Controllers\Api\PostController::class);

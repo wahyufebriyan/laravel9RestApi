@@ -30,6 +30,8 @@ class PostController extends BaseController
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $postId = $request->id;
+
         //check if validation fails
         if ($validator->fails()) {
             return $this->sendError('Validator error.', $validator->errors());
@@ -38,7 +40,7 @@ class PostController extends BaseController
         $image = $request->file('photo');
         $image->storeAs('public/posts', $image->hashName());
 
-        $post = Post::create([
+        $post = Post::updateOrCreate(['id' => $postId,
             'title' => $request->title,
             'description' => $request->description,
             'teknologi' => $request->teknologi,
@@ -47,7 +49,7 @@ class PostController extends BaseController
             'photo' => $image->hashName(),
         ]);
 
-        return $this->sendResponse(new PostResource($post), 'Created success.');
+        return $this->sendResponse(new PostResource($post),'Success.');
     }
 
     public function show($id)
@@ -59,52 +61,11 @@ class PostController extends BaseController
         return $this->sendResponse(new PostResource($post), 'Posts retrieved success.');
     }
 
-    public function update(Request $request, Post $post)
-    {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required',
-            'teknologi' => 'required',
-            'repo' => 'required',
-            'live' => '',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        //check if validation fails
-        if ($validator->fails()) {
-            return $this->sendError('Validator error.', $validator->errors());
-        }
-
-        if($request->hashFile('photo')) {
-            $image = $request->file('photo');
-            $image->storeAs('public/posts', $image->hashName());
-
-            Storage::delete('public/posts/'.$post->photo);
-
-            $post->update([
-                'title' => $request->title,
-                'description' => $request->description,
-                'teknologi' => $request->teknologi,
-                'repo' => $request->repo,
-                'live' => $request->live,
-                'photo' => $image->hashName(),
-            ]);
-        }else{
-            $post->update([
-                'title' => $request->title,
-                'description' => $request->description,
-                'teknologi' => $request->teknologi,
-                'repo' => $request->repo,
-                'live' => $request->live,
-            ]);
-        }
-
-        return $this->sendResponse(new PostResource($post), 'Update success.');
-    }
-
     public function destroy(Post $post)
     {
-        Storage::delete('public/posts/'.$post->image);
+        $image_path = public_path().'/storage/posts/'.$post->photo;
+        unlink($image_path);
+
         $post->delete();
 
         return $this->sendResponse([], 'Delete success.');
